@@ -11,10 +11,13 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,26 +28,41 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        final EditText editURL = ((EditText) findViewById(R.id.editURL));
+        final EditText editPassword = ((EditText) findViewById(R.id.editPassword));
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         Intent intent = getIntent();
         String action = intent.getAction();
         String type = intent.getType();
+
+        editPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    fab.requestFocus();
+                    fab.callOnClick();
+                    //Return false so done action gets performed, hiding the keyboard
+                }
+                return handled;
+            }
+        });
+
         final boolean fromShare = Intent.ACTION_SEND.equals(action) && "text/plain".equals(type);
         if (fromShare) {
-            ((EditText) findViewById(R.id.editURL)).setText(intent.getStringExtra(Intent.EXTRA_TEXT));
-            findViewById(R.id.editPassword).requestFocus();
+            editURL.setText(intent.getStringExtra(Intent.EXTRA_TEXT));
+            editPassword.requestFocus();
         }
 
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
                 String salt = prefs.getString("user_salt",  getString(R.string.pref_default_user_salt));
                 String iterations = prefs.getString("iterations", getString(R.string.pref_default_iterations));
-                String uri = ((EditText) findViewById(R.id.editURL)).getText().toString();
+                String uri = editURL.getText().toString();
                 String domain = DomainExtractor.extractDomain(uri);
-                String password = ((EditText) findViewById(R.id.editPassword)).getText().toString();
+                String password = editPassword.getText().toString();
 
                 Snackbar.make(view, "Calculating, please wait...", Snackbar.LENGTH_INDEFINITE).show();
 
