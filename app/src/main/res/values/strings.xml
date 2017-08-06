@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">PwdHash-PoC</string>
+    <string name="action_settings">Settings</string>
+    <string name="url">URL</string>
+    <string name="password">Password</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+    <string name="pref_title_user_salt">User Salt</string>
+    <string name="pref_default_user_salt">ChangeMe</string>
+    <string name="pref_default_iterations">5000</string>
+    <string name="pref_title_iterations">Iterations</string>
+
+</resources>
