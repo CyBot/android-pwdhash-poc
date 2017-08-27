@@ -18,8 +18,8 @@ android {
         applicationId "org.eu.cybot.pwdhash_poc"
         minSdkVersion 16
         targetSdkVersion 26
-        versionCode 4
-        versionName "0.4"
+        versionCode 6
+        versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
