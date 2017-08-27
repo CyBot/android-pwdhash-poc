@@ -2,6 +2,7 @@ package org.eu.cybot.pwdhash_poc;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -135,8 +137,10 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+        final EditText editURL = ((EditText) findViewById(R.id.editURL));
         final EditText editPassword = ((EditText) findViewById(R.id.editPassword));
         final TextView textMode = ((TextView) findViewById(R.id.textMode));
+        final InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
         if (prefs.getBoolean("legacy", getString(R.string.pref_default_legacy).equalsIgnoreCase("true")))
             textMode.setText(getString(R.string.legacy_enabled));
@@ -146,9 +150,10 @@ public class MainActivity extends AppCompatActivity {
         if (pwd != null && !pwd.isEmpty())
             editPassword.setText(pwd);
         if (url != null && !url.isEmpty()) {
-            ((EditText) findViewById(R.id.editURL)).setText(url);
+            editURL.setText(url);
             editPassword.requestFocus();
             editPassword.setSelection(editPassword.getText().length());
         }
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
     }
 }
