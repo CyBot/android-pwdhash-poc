@@ -21,6 +21,10 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
+    private String url;
+    private String pwd;
+    private boolean fromShare;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        final boolean fromShare = Intent.ACTION_SEND.equals(action) && "text/plain".equals(type);
+        fromShare = Intent.ACTION_SEND.equals(action) && "text/plain".equals(type);
         if (fromShare) {
             editURL.setText(intent.getStringExtra(Intent.EXTRA_TEXT));
             editPassword.requestFocus();
@@ -106,7 +110,6 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             Intent modifySettings = new Intent(MainActivity.this, SettingsActivity.class);
             startActivity(modifySettings);
@@ -114,5 +117,27 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        url = ((EditText) findViewById(R.id.editURL)).getText().toString();
+        pwd = ((EditText) findViewById(R.id.editPassword)).getText().toString();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        final EditText editPassword = ((EditText) findViewById(R.id.editPassword));
+        if (pwd != null && !pwd.isEmpty())
+            editPassword.setText(pwd);
+        if (url != null && !url.isEmpty()) {
+            ((EditText) findViewById(R.id.editURL)).setText(url);
+            editPassword.requestFocus();
+            editPassword.setSelection(editPassword.getText().length());
+        }
     }
 }
