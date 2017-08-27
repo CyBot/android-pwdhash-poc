@@ -58,8 +58,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(final View view) {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-                String salt = prefs.getString("user_salt",  getString(R.string.pref_default_user_salt));
-                String iterations = prefs.getString("iterations", getString(R.string.pref_default_iterations));
+                boolean legacy = prefs.getBoolean("legacy", getString(R.string.pref_default_legacy).equalsIgnoreCase("true"));
+                String salt = legacy ? null : prefs.getString("user_salt",  getString(R.string.pref_default_user_salt));
+                String iterations = legacy ? null : prefs.getString("iterations", getString(R.string.pref_default_iterations));
                 String uri = editURL.getText().toString();
                 String domain = DomainExtractor.extractDomain(uri);
                 String password = editPassword.getText().toString();
@@ -71,7 +72,10 @@ public class MainActivity extends AppCompatActivity {
                     protected String doInBackground(String... strings) {
                         if (strings.length != 4)
                             return null;
-                        return HashedPasswordPoC.create(strings[0], strings[1], strings[2], Integer.valueOf(strings[3])).toString();
+                        if (strings[2] == null)
+                            return HashedPassword.create(strings[0], strings[1]).toString();
+                        else
+                            return HashedPasswordPoC.create(strings[0], strings[1], strings[2], Integer.valueOf(strings[3])).toString();
                     }
 
                     @Override

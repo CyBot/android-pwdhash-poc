@@ -8,7 +8,9 @@
     <!-- Strings related to Settings -->
     <string name="pref_title_user_salt">User Salt</string>
     <string name="pref_default_user_salt">ChangeMe</string>
-    <string name="pref_default_iterations">5000</string>
     <string name="pref_title_iterations">Iterations</string>
+    <string name="pref_default_iterations">5000</string>
+    <string name="pref_title_legacy">Stanford Legacy Mode</string>
+    <string name="pref_default_legacy">false</string>
 
 </resources>

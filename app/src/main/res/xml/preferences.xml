@@ -10,7 +10,8 @@
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:title="@string/pref_title_user_salt" />
+        android:title="@string/pref_title_user_salt"
+        android:dependency="legacy"/>
 
     <EditTextPreference
         android:defaultValue="@string/pref_default_iterations"
@@ -19,6 +20,13 @@
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:title="@string/pref_title_iterations" />
+        android:title="@string/pref_title_iterations"
+        android:dependency="legacy"/>
+
+    <CheckBoxPreference
+        android:defaultValue="@string/pref_default_legacy"
+        android:key="legacy"
+        android:title="@string/pref_title_legacy"
+        android:disableDependentsState="true"/>
 
 </PreferenceScreen>
