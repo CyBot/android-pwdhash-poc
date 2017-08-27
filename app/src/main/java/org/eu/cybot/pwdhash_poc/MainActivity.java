@@ -34,11 +34,15 @@ public class MainActivity extends AppCompatActivity {
 
         final EditText editURL = ((EditText) findViewById(R.id.editURL));
         final EditText editPassword = ((EditText) findViewById(R.id.editPassword));
+        final TextView textMode = ((TextView) findViewById(R.id.textMode));
         final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
         Intent intent = getIntent();
         String action = intent.getAction();
         String type = intent.getType();
 
+        if (prefs.getBoolean("legacy", getString(R.string.pref_default_legacy).equalsIgnoreCase("true")))
+            textMode.setText(getString(R.string.legacy_enabled));
         editPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
@@ -61,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
                 boolean legacy = prefs.getBoolean("legacy", getString(R.string.pref_default_legacy).equalsIgnoreCase("true"));
                 String salt = legacy ? null : prefs.getString("user_salt",  getString(R.string.pref_default_user_salt));
                 String iterations = legacy ? null : prefs.getString("iterations", getString(R.string.pref_default_iterations));
@@ -131,7 +134,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
         final EditText editPassword = ((EditText) findViewById(R.id.editPassword));
+        final TextView textMode = ((TextView) findViewById(R.id.textMode));
+
+        if (prefs.getBoolean("legacy", getString(R.string.pref_default_legacy).equalsIgnoreCase("true")))
+            textMode.setText(getString(R.string.legacy_enabled));
+        else
+            textMode.setText("");
+
         if (pwd != null && !pwd.isEmpty())
             editPassword.setText(pwd);
         if (url != null && !url.isEmpty()) {
