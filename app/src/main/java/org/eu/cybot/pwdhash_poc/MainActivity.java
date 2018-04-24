@@ -31,13 +31,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        final EditText editURL = ((EditText) findViewById(R.id.editURL));
-        final EditText editPassword = ((EditText) findViewById(R.id.editPassword));
-        final TextView textMode = ((TextView) findViewById(R.id.textMode));
-        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        final EditText editURL = findViewById(R.id.editURL);
+        final EditText editPassword = findViewById(R.id.editPassword);
+        final TextView textMode = findViewById(R.id.textMode);
+        final FloatingActionButton fab = findViewById(R.id.fab);
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
         Intent intent = getIntent();
         String action = intent.getAction();
@@ -136,11 +136,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+        revealSwitch.setVisibility(View.INVISIBLE);
+        revealText.setVisibility(View.INVISIBLE);
+
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-        final EditText editURL = ((EditText) findViewById(R.id.editURL));
-        final EditText editPassword = ((EditText) findViewById(R.id.editPassword));
-        final TextView textMode = ((TextView) findViewById(R.id.textMode));
-        final InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        final EditText editURL = findViewById(R.id.editURL);
+        final EditText editPassword = findViewById(R.id.editPassword);
+        final TextView textMode = findViewById(R.id.textMode);
 
         if (prefs.getBoolean("legacy", getString(R.string.pref_default_legacy).equalsIgnoreCase("true")))
             textMode.setText(getString(R.string.legacy_enabled));
@@ -154,6 +156,8 @@ public class MainActivity extends AppCompatActivity {
             editPassword.requestFocus();
             editPassword.setSelection(editPassword.getText().length());
         }
-        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null)
+            imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
     }
 }
