@@ -21,11 +21,14 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.lang.ref.WeakReference;
+
 public class MainActivity extends AppCompatActivity {
 
     private String url;
     private String pwd;
     private boolean fromShare;
+    private View view;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,29 +79,45 @@ public class MainActivity extends AppCompatActivity {
 
                 Snackbar.make(view, "Calculating, please wait...", Snackbar.LENGTH_INDEFINITE).show();
 
-                new AsyncTask<String, Integer, String>() {
-                    @Override
-                    protected String doInBackground(String... strings) {
-                        if (strings.length != 4)
-                            return null;
-                        if (strings[2] == null)
-                            return HashedPassword.create(strings[0], strings[1]).toString();
-                        else
-                            return HashedPasswordPoC.create(strings[0], strings[1], strings[2], Integer.valueOf(strings[3])).toString();
-                    }
+                MainActivity.this.view = view;
 
-                    @Override
-                    protected void onPostExecute(String hashed) {
-                        ClipboardManager cb = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-                        cb.setPrimaryClip(ClipData.newPlainText("password", hashed));
-                        Snackbar.make(view, "Password has been copied to clipboard", Snackbar.LENGTH_LONG).show();
-                        if (fromShare)
-                            MainActivity.this.finish();
-                    }
-                }.execute(password, domain, salt, iterations);
+                new HashPasswordTask(MainActivity.this).execute(password, domain, salt, iterations);
+            }
+        });
 
             }
         });
+    }
+
+    private static class HashPasswordTask extends AsyncTask<String, Void, String> {
+        private final WeakReference<MainActivity> activityRef;
+        HashPasswordTask(MainActivity context) {
+            this.activityRef = new WeakReference<>(context);
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            if (strings.length != 4)
+                return null;
+            if (strings[2] == null)
+                return HashedPassword.create(strings[0], strings[1]).toString();
+            else
+                return HashedPasswordPoC.create(strings[0], strings[1], strings[2], Integer.valueOf(strings[3])).toString();
+        }
+
+        @Override
+        protected void onPostExecute(String hashed) {
+            MainActivity activity = activityRef.get();
+            if (activity == null || activity.isFinishing())
+                return;
+
+            ClipboardManager cb = (ClipboardManager) activity.getSystemService(CLIPBOARD_SERVICE);
+            if (cb != null)
+                cb.setPrimaryClip(ClipData.newPlainText("password", hashed));
+            Snackbar.make(activity.view, "Password has been copied to clipboard", Snackbar.LENGTH_LONG).show();
+            if (activity.fromShare)
+                activity.finish();
+        }
     }
 
     @Override
