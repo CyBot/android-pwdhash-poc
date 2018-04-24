@@ -40,14 +40,10 @@ import android.util.Log;
 
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
-import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.regex.Pattern;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 
 /**
  * Hashed Password
