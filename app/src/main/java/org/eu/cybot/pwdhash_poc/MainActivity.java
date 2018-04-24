@@ -18,7 +18,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import java.lang.ref.WeakReference;
@@ -29,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
     private String pwd;
     private boolean fromShare;
     private View view;
+    private EditText revealText;
+    private Switch revealSwitch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        revealText = findViewById(R.id.editReveal);
+        revealSwitch = findViewById(R.id.switchReveal);
 
         final EditText editURL = findViewById(R.id.editURL);
         final EditText editPassword = findViewById(R.id.editPassword);
@@ -77,6 +84,9 @@ public class MainActivity extends AppCompatActivity {
                 String domain = DomainExtractor.extractDomain(uri);
                 String password = editPassword.getText().toString();
 
+                revealSwitch.setVisibility(View.INVISIBLE);
+                revealText.setVisibility(View.INVISIBLE);
+
                 View focus_view = MainActivity.this.getCurrentFocus();
                 if (focus_view != null) {
                     InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -92,6 +102,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        revealSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                revealText.setVisibility(isChecked ? View.VISIBLE : View.INVISIBLE);
             }
         });
     }
@@ -124,6 +138,10 @@ public class MainActivity extends AppCompatActivity {
             Snackbar.make(activity.view, "Password has been copied to clipboard", Snackbar.LENGTH_LONG).show();
             if (activity.fromShare)
                 activity.finish();
+
+            activity.revealSwitch.setChecked(false);
+            activity.revealSwitch.setVisibility(View.VISIBLE);
+            activity.revealText.setText(hashed);
         }
     }
 
