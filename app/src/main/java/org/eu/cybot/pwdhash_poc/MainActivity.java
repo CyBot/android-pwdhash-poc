@@ -77,6 +77,13 @@ public class MainActivity extends AppCompatActivity {
                 String domain = DomainExtractor.extractDomain(uri);
                 String password = editPassword.getText().toString();
 
+                View focus_view = MainActivity.this.getCurrentFocus();
+                if (focus_view != null) {
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (imm != null)
+                        imm.hideSoftInputFromWindow(focus_view.getWindowToken(), 0);
+                }
+
                 Snackbar.make(view, "Calculating, please wait...", Snackbar.LENGTH_INDEFINITE).show();
 
                 MainActivity.this.view = view;
